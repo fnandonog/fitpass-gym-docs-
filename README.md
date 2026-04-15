@@ -1,109 +1,47 @@
-# Diagrama de Classes - FitPass Gym Management
+# FitPass Gym Management - Modelagem do Sistema
 
-Este é o diagrama de domínio do sistema da academia, baseado nos requisitos funcionais solicitados.
+Este repositório contém a modelagem de domínio e de casos de uso para o sistema FitPass, atendendo aos requisitos funcionais (RF01 a RF10).
 
-```mermaid
-classDiagram
-    class Pessoa {
-        <<abstract>>
-        -String nome
-        -String cpf
-        -String email
-        -String telefone
-    }
+---
 
-    class Aluno {
-        -String rfid
-        -String endereco
-        -boolean inadimplente
-        +verificarRegularidade()
-    }
+## 1. Diagrama de Casos de Uso
 
-    class Funcionario {
-        <<abstract>>
-        -String matricula
-    }
+Abaixo está o código PlantUML que modela as interações dos atores com o sistema:
 
-    class Instrutor {
-        -String cref
-        +registrarPresenca()
-        +registrarAvaliacao()
-    }
+```plantuml
+@startuml
+left to right direction
 
-    class Gerente {
-        +gerarRelatorioInadimplencia()
-        +gerarRelatoriosAtivos()
-        +gerarRelatorioOcupacao()
-    }
+actor Aluno
+actor Instrutor
+actor Gerente
+actor Recepcionista
+actor "Sistema de Controle de Acesso" as Catraca
 
-    class Plano {
-        -String nome
-        -String tipoPlano
-        -double valorMensal
-        -boolean ativo
-    }
+rectangle "FitPass Gym Management" {
 
-    class Contrato {
-        -Date dataInicio
-        -Date dataFim
-        -boolean ativo
-    }
+  Aluno -- (Agendar aula)
+  Aluno -- (Realizar pagamento online)
+  Aluno -- (Visualizar horários de aula)
 
-    class Pagamento {
-        -double valor
-        -Date dataVencimento
-        -Date dataPagamento
-        -String metodoPagamento
-        -String status
-    }
+  Recepcionista -- (Cadastrar aluno)
+  Recepcionista -- (Registrar pagamento presencial)
 
-    class Aula {
-        -String modalidade
-        -Date dataHora
-        -int vagasTotais
-        -int vagasDisponiveis
-    }
+  Instrutor -- (Registrar presença)
+  Instrutor -- (Registrar avaliação física)
 
-    class Agendamento {
-        -Date dataReserva
-        -boolean presencaConfirmada
-    }
+  Gerente -- (Gerenciar planos)
+  Gerente -- (Emitir relatórios gerenciais)
 
-    class AvaliacaoFisica {
-        -Date data
-        -double peso
-        -double imc
-        -double percentualGordura
-        -String caminhoArquivoAnexo
-    }
+  Catraca -- (Validar acesso do aluno)
 
-    class Acesso {
-        -Date dataHora
-        -boolean liberado
-        -String motivoBloqueio
-    }
+  (Validar acesso do aluno) ..> (Verificar regularidade do aluno) : <<include>>
+  (Registrar pagamento presencial) ..> (Verificar regularidade do aluno) : <<include>>
+  (Realizar pagamento online) ..> (Verificar regularidade do aluno) : <<include>>
 
-    class Notificacao {
-        -String tipo
-        -String mensagem
-        -Date dataEnvio
-    }
-
-    Pessoa <|-- Aluno
-    Pessoa <|-- Funcionario
-    Funcionario <|-- Instrutor
-    Funcionario <|-- Gerente
-
-    Aluno "1" -- "0..*" Contrato : assina
-    Plano "1" -- "0..*" Contrato : contem
-    Contrato "1" -- "1..*" Pagamento : gera
-
-    Aluno "1" -- "0..*" Acesso : realiza
-    Aluno "1" -- "0..*" Notificacao : recebe
-
-    Aluno "1" -- "0..*" Agendamento : faz
-    Aula "1" -- "0..*" Agendamento : possui
-    Instrutor "1" -- "0..*" Aula : ministra
-
-    Aluno "1" -- "0..*" AvaliacaoFisica : submetido
-    Instrutor "1" -- "0..*" AvaliacaoFisica : realiza
+  (Agendar aula) <.. (Enviar notificação) : <<extend>>
+  (Registrar avaliação física) <.. (Enviar notificação) : <<extend>>
+  (Registrar pagamento presencial) <.. (Enviar notificação) : <<extend>>
+  (Realizar pagamento online) <.. (Enviar notificação) : <<extend>>
+}
+@enduml
