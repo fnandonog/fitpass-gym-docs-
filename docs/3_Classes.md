@@ -1,7 +1,8 @@
+# Diagrama de Classes - FitPass Gym Management
 
-### 📌 Entidades do Domínio e Atributos
+## 1. Identificação das Classes e Atributos
 
-**1. Aluno** *(RF01, RF04, RF05, RF06, RF10)*
+**Aluno** (RF01, RF04, RF05, RF06, RF10)
 * idAluno
 * nome
 * cpf
@@ -11,42 +12,42 @@
 * rfid
 * status
 
-**2. Plano** *(RF01, RF02, RF04)*
+**Plano** (RF01, RF02, RF04)
 * idPlano
 * nome
 * tipo
 * valor
 * ativo
 
-**3. Pagamento** *(RF03, RF04, RF09)*
+**Pagamento** (RF03, RF04, RF09)
 * idPagamento
 * data
 * valor
 * formaPagamento
 * status
 
-**4. Acesso** *(RF05, RF09)*
+**Acesso** (RF05, RF09)
 * idAcesso
 * dataHora
 * autorizado
 
-**5. Aula** *(RF06, RF07, RF09)*
+**Aula** (RF06, RF07, RF09)
 * idAula
 * nome
 * horario
 * capacidadeMaxima
 
-**6. Agendamento** *(RF06, RF10)*
+**Agendamento** (RF06, RF10)
 * idAgendamento
 * dataReserva
 * status
 
-**7. Presenca** *(RF07)*
+**Presenca** (RF07)
 * idPresenca
 * data
 * presente
 
-**8. AvaliacaoFisica** *(RF08, RF10)*
+**AvaliacaoFisica** (RF08, RF10)
 * idAvaliacao
 * data
 * peso
@@ -55,22 +56,133 @@
 * observacoes
 * anexo
 
-**9. Notificacao** *(RF10)*
+**Notificacao** (RF10)
 * idNotificacao
 * tipo
 * dataEnvio
 * status
 * mensagem
 
-**10. Instrutor** *(RF07, RF08)*
+**Instrutor** (RF07, RF08)
 * idInstrutor
 * nome
 * especialidade
 
-**11. Recepcionista** *(RF01, RF03)*
+**Recepcionista** (RF01, RF03)
 * idRecepcionista
 * nome
 
-**12. Gerente** *(RF02, RF09)*
+**Gerente** (RF02, RF09)
 * idGerente
 * nome
+
+---
+
+## 2. Diagrama Visual de Relacionamentos
+
+Abaixo está a representação visual do Diagrama de Classes do Domínio, gerada via Mermaid:
+
+```mermaid
+classDiagram
+    class Aluno {
+        -String idAluno
+        -String nome
+        -String cpf
+        -String email
+        -String telefone
+        -String endereco
+        -String rfid
+        -String status
+    }
+
+    class Plano {
+        -String idPlano
+        -String nome
+        -String tipo
+        -double valor
+        -boolean ativo
+    }
+
+    class Pagamento {
+        -String idPagamento
+        -Date data
+        -double valor
+        -String formaPagamento
+        -String status
+    }
+
+    class Acesso {
+        -String idAcesso
+        -Date dataHora
+        -boolean autorizado
+    }
+
+    class Aula {
+        -String idAula
+        -String nome
+        -String horario
+        -int capacidadeMaxima
+    }
+
+    class Agendamento {
+        -String idAgendamento
+        -Date dataReserva
+        -String status
+    }
+
+    class Presenca {
+        -String idPresenca
+        -Date data
+        -boolean presente
+    }
+
+    class AvaliacaoFisica {
+        -String idAvaliacao
+        -Date data
+        -double peso
+        -double imc
+        -double percentualGordura
+        -String observacoes
+        -String anexo
+    }
+
+    class Notificacao {
+        -String idNotificacao
+        -String tipo
+        -Date dataEnvio
+        -String status
+        -String mensagem
+    }
+
+    class Instrutor {
+        -String idInstrutor
+        -String nome
+        -String especialidade
+    }
+
+    class Recepcionista {
+        -String idRecepcionista
+        -String nome
+    }
+
+    class Gerente {
+        -String idGerente
+        -String nome
+    }
+
+    %% Relacionamentos
+    Aluno "1" -- "0..*" Plano : contrata
+    Aluno "1" -- "1..*" Pagamento : realiza
+    Aluno "1" -- "0..*" Acesso : possui
+    Aluno "1" -- "0..*" Agendamento : faz
+    Aluno "1" -- "0..*" AvaliacaoFisica : recebe
+    Aluno "1" -- "0..*" Notificacao : recebe
+    
+    Agendamento "0..*" -- "1" Aula : pertence
+    Aula "1" -- "1" Instrutor : ministrada por
+    Aula "1" -- "0..*" Presenca : gera
+    
+    Instrutor "1" -- "0..*" AvaliacaoFisica : realiza
+    
+    Recepcionista "1" -- "0..*" Pagamento : processa
+    Gerente "1" -- "0..*" Plano : gerencia
